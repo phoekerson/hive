@@ -3,8 +3,10 @@
 import { api } from "@/convex/_generated/api";
 import { useUser } from "@clerk/nextjs"
 import { useMutation } from "convex/react";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { LoadingSpinner } from "./LoadingSpinner";
+import streamClient from "@/lib/stream";
+import { createToken } from "@/actions/createToken";
 
 function UserSyncWrapper({children}: {children: React.ReactNode}) {
   const {user, isLoaded: isUserLoaded} = useUser();
@@ -19,6 +21,15 @@ function UserSyncWrapper({children}: {children: React.ReactNode}) {
         setIsLoading(true);
         setError(null); 
 
+        const tokenProvider = async () => {
+            if(!user?.id) {
+                throw new Error ("User ID is not authenticated");
+            };    
+
+            const token = await createToken(user.id);
+            return token;
+        }
+
         await createdOrUpdateUser({
             userId: user.id, 
             name: 
@@ -29,7 +40,19 @@ function UserSyncWrapper({children}: {children: React.ReactNode}) {
             imageUrl: user.imageUrl || "",
         });
 
-        
+        // cpnnect user to stream 
+        await streamClient.connectUser(
+            { 
+                id: user.id, 
+                name: 
+                    user.fullName ||
+                    user.firstName || 
+                    user.emailAddresses[0]?.emailAddress || 
+                    "Unknown User", 
+                    image: user.imageUrl || "",
+            }, 
+            tokenProvider
+        )
 
 
     } catch (error) {
@@ -39,6 +62,33 @@ function UserSyncWrapper({children}: {children: React.ReactNode}) {
         setIsLoading(false);
     }
   }, [createdOrUpdateUser, user]); 
+
+  const disconnectUser = useCallback(async() => {
+    try{
+        await streamClient.disconnectUser();
+    }catch (error){
+        console.error("Failed to disconnect the user:", error);
+    }
+  }, [])
+
+  useEffect(() => {
+    if(!isUserLoaded) return; 
+    if(user){
+        syncUser();
+    } else {
+        disconnectUser();
+        setIsLoading(false);
+    }
+    // cleanup function  
+    return () => { 
+        if(user){
+            disconnectUser();
+        }
+    }
+
+
+
+  }, [user, isUserLoaded, syncUser, disconnectUser])
   
   if(!isUserLoaded || isLoading) {
     return (
