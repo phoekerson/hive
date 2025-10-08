@@ -1,6 +1,5 @@
 "use client"
 import * as React from "react"
-import { GalleryVerticalEnd } from "lucide-react"
 
 import {
   Sidebar,
@@ -9,13 +8,12 @@ import {
   SidebarHeader,
   SidebarMenu,
   SidebarMenuButton,
-  SidebarMenuItem,
-  SidebarMenuSub,
-  SidebarMenuSubButton,
-  SidebarMenuSubItem,
+  SidebarMenuItem
 } from "@/components/ui/sidebar"
 import { Button } from "./ui/button"
 import { UserButton, useUser } from "@clerk/nextjs"
+import { ChannelList } from "stream-chat-react"
+import { ChannelFilters, ChannelSort } from "stream-chat"
 
 // This is sample data.
 // const data = {
@@ -160,6 +158,15 @@ import { UserButton, useUser } from "@clerk/nextjs"
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const {user} = useUser();
+
+  const filters: ChannelFilters = { 
+    members: {$in : [user?.id as string]},
+    type: { $in: ["messaging", "team"]},
+  };
+  const options = { presence: true, state: true};
+  const sort : ChannelSort = { 
+    last_message_at: -1
+  }
   return (
     <Sidebar variant="floating" {...props}>
       <SidebarHeader>
@@ -188,6 +195,26 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
               Start New Chat
             </Button>
             {/*  Channel list */}
+
+            <ChannelList
+             sort={sort} 
+             filters={filters}
+             options={options} 
+             EmptyStateIndicator={ () => (
+              <div className="flex flex-col items-center justify-center h-full
+              py-12 px-4">
+
+                <div className="text-6xl mb-6 opacity-20">💬</div>
+                <h2 className="text-xl font-medium text-foreground mb-2"> 
+                  Ready to chat ? 
+                </h2>
+                <p className="text-sm text-muted-foreground text-center leading-relaxed max-w-[200px]">
+                  Your conversations will appear here 
+                </p>
+                </div>
+              
+             )}
+            />
           </SidebarMenu>
         </SidebarGroup>
       </SidebarContent>
