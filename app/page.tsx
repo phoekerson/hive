@@ -16,17 +16,14 @@ export default function Home() {
           via-indigo-50 to-white dark:from-blue-950/20 dark:via-indigo-20 
           dark:to-purple-950/20 rounded-3xl blur-3xl scale-150 opacity-60">
           </div>
-
           <div className="max-w-4xl space-y-8 relative">
             <h1 className="text-5xl sm:text-7xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-blue-500 via-purple-500
             to-indigo-600 dark:from-blue-400 dark:via-purple-400 dark:to-indigo-400">
               Chat smarter
             </h1> 
             <br />
-
             <span className="bg-clip-text text-transparent bg-gradient-to-r from-purple-600 to-pink-600 dark:from-purple-500
             dark:to-pink-400">
-           
             </span>
         
 
