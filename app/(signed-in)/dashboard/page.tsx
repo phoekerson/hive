@@ -15,8 +15,22 @@ function Dashboard() {
   const handleCall = () => {
     console.log("starting call...");
   }
-  const handleLeaveCall = () => {
-    console.log("Leaving chat");
+  const handleLeaveCall = async() => {
+    if(!channel || !user?.id) {
+      console.log("No active channel or user");
+      return;
+    }
+    const confirm = window.confirm("Are you sure you want to Leave the chat?");
+    if(!confirm) return; 
+
+    try {
+      await channel.removeMembers([user.id]);
+      setActiveChannel(undefined);
+      router.push("/dashboard");
+    } catch (error) {
+      console.error("Error leaving chat", error);
+      
+    }
   }
   return (
     <div className="flex flex-col w-full flex-1"> 
@@ -43,13 +57,13 @@ function Dashboard() {
                 <LogOutIcon className="w-4 h-4"/> 
                 Leave Chat
               </Button>
+            </div> 
             </div>
-
             <MessageList/>
             <div className="sticky bottom-0 w-full">
               <MessageInput/>
             </div>
-           </div>
+           
         </Window>
 
       </Channel>

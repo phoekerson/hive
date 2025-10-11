@@ -25,8 +25,8 @@
     "react": "19.1.0",
     "react-dom": "19.1.0",
     "shadcn": "^3.4.0",
-    "stream-chat": "^9.20.0",
-    "stream-chat-react": "^13.7.0",
+    "stream-chat": "^9.22.1",
+    "stream-chat-react": "^13.9.0",
     "tailwind-merge": "^3.3.1"
   },
   "devDependencies": {
