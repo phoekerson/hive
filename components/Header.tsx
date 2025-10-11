@@ -13,7 +13,7 @@ function Header() {
          Hive
         </Link>
 
-        <div>
+        <div className="flex items-center gap-2">
             <Authenticated>
                 {
                     !isDashboard && (

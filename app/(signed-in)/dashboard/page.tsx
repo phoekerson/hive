@@ -14,6 +14,10 @@ function Dashboard() {
   const {setOpen} = useSidebar();
   const handleCall = () => {
     console.log("starting call...");
+    if(!channel) return 
+      router.push(`/dashboard/video-call/${channel.id}`);
+      setOpen(false);
+    
   }
   const handleLeaveCall = async() => {
     if(!channel || !user?.id) {
